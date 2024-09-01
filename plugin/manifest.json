@@ -1,0 +1,26 @@
+{
+    "manifest_version": 2,
+    "name": "LikeNative",
+    "version": "1.0",
+  
+    "description": "Translates reddit pages into a selected language, then allows unmasking of the original text.",
+  
+    "icons": {
+      "48": "icons/border-48.png"
+    },
+    "permissions":[
+        "activeTab",
+        "tabs",
+        "storage",
+        "webRequest",
+        "http://localhost/*"
+    ],
+  
+    "content_scripts": [
+      {
+        "matches": ["*://*.reddit.com/*"],
+        "js": ["dist/contentScript.js"]
+      }
+    ]
+  }
+  
