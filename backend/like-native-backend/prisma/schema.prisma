@@ -1,0 +1,56 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model translations {
+  id        Int      @id @default(autoincrement())
+  key       String
+  value     String
+  language  String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now())
+}
+
+model Card{
+  id       Int      @id @default(autoincrement())
+  nativeLanguageMessage String
+  foreignLanguageMessage String
+  notesNativeLanguage String
+  notesForeignLanguage String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now())
+  cardAttempts CardAttempt[]
+  EnglishCommonality Int //frequency rank of the word in English. If neither language is English, this will be -1
+  unmasks Int //number of times the foreign word on this card has been unmasked 
+  quizAttempts QuizAttempt[]
+}
+
+model CardAttempt{
+  id       Int      @id @default(autoincrement())
+  cardId   Int
+  card Card @relation(fields: [cardId], references: [id])
+  relativeStrength Int // 1,2,3,4,5 where 1 is a fail and 5 is no difficulty at all
+  foreignLanguageAttempt Boolean // true if the attempt was in the foreign language - false if in the native language. This is for flipped cards
+  timeTaken Int //time taken in seconds
+  sessionId String
+  createdAt DateTime @default(now())
+}
+
+model QuizAttempt{
+  id      Int      @id @default(autoincrement())
+  cardId Int
+  card Card @relation(fields: [cardId], references: [id])
+  correct Boolean
+  foreignSide Boolean // true if the attempt was in the foreign language - false if in the native language. This is for flipped cards
+}

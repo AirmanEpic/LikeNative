@@ -1,3 +1,6 @@
 
 .env
 /plugin/node_modules
+/backend/like-native-backend/.next
+/backend/like-native-backend/.sst
+/backend/like-native-backend/node_modules

@@ -1,0 +1,32 @@
+{
+  "name": "like-native-backend",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "sst bind next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint"
+  },
+  "dependencies": {
+    "@google-cloud/translate": "^8.3.0",
+    "@heroicons/react": "^2.1.5",
+    "@prisma/client": "^5.18.0",
+    "heroicons": "^2.1.5",
+    "next": "14.2.5",
+    "react": "^18",
+    "react-dom": "^18"
+  },
+  "devDependencies": {
+    "@types/node": "^20",
+    "@types/react": "^18",
+    "@types/react-dom": "^18",
+    "aws-cdk-lib": "2.142.1",
+    "constructs": "10.3.0",
+    "eslint": "^8",
+    "eslint-config-next": "14.2.5",
+    "prisma": "^5.17.0",
+    "sst": "^2.43.4",
+    "typescript": "^5"
+  }
+}
