@@ -1,5 +1,5 @@
 'use server'
-import { Card, CardAttempt, PrismaClient } from "@prisma/client"
+import { Card, CardAttempt, PrismaClient, QuizAttempt } from "@prisma/client"
 import { getCardStats } from "./cardStats"
 
 export interface CardAndAttempts extends Card{
@@ -170,11 +170,19 @@ export async function getCard(id: number) {
 
     //get all translations using the foreign word
     let translations = await prismaClient.translations.findMany()
-    translations = translations.filter((translation)=>{
+    translations = translations.filter((translation,)=>{
         let lowercaseTranslation = translation.value.toLowerCase()
         let lowercaseForeign = card.foreignLanguageMessage.toLowerCase()
         return lowercaseTranslation.includes(lowercaseForeign)
     })
+
+    //shuffle the translations
+    translations = translations.sort((a,b)=>{
+        return Math.random() - 0.5
+    })
+
+    //only return the first 10 translations
+    translations = translations.slice(0, 10)
 
     let cardAndTranslations = {...card, translations}
 
@@ -223,22 +231,22 @@ export async function getQuizTargetCardIds(length:number){
         include:{
             cardAttempts:true,
             quizAttempts:true
-        },
-        where:{
-            //reject cards that the user has gotten correct (isCorrect==true)
-            quizAttempts:{
-                none:{
-                    correct:true
-                }
-            }
         }
-    }) as CardAndAttempts[]
+    }) as (CardAndAttempts & {quizAttempts:QuizAttempt[]})[]
 
     prismaClient.$disconnect()
     cards = cards.filter((card)=>{
         return card.cardAttempts.length > 5
     })
     console.log("Cards with more than 5 attempts: ", cards.length)
+
+    cards = cards.filter((card)=>{
+        let lastAttempt = card.quizAttempts[card.quizAttempts.length-1]
+        if (!lastAttempt){
+            return true
+        }
+        return !lastAttempt.correct
+    })
 
     //weight each card based on the importance and frequency
     let weightedCard:(Card&{weight:number})[] = cards.map((card)=>{
